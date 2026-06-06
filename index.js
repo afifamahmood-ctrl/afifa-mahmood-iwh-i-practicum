@@ -6,24 +6,17 @@ require('dotenv').config();
 
 const app = express();
 
-// ---------- App configuration ----------
 app.set('view engine', 'pug');                    // render .pug files in /views
 app.use(express.static(__dirname + '/public'));   // serve CSS from /public
 app.use(express.urlencoded({ extended: true }));  // parse HTML form submissions
 
-// ====================================================================
-// CONFIG — change these three things to match YOUR account
-// ====================================================================
 const PRIVATE_APP_TOKEN = process.env.PRIVATE_APP_TOKEN;
 
-// Your custom object's ID (the "2-XXXXXXXX" from the list-view URL)
 const CUSTOM_OBJECT = '2-63742191';
 
-// The INTERNAL names of your 3 properties (from Settings > Properties)
 const PROPERTIES = ['name', 'publisher', 'price'];
-// ====================================================================
 
-// Axios instance pre-loaded with the auth header so we don't repeat it
+
 const hubspot = axios.create({
   baseURL: 'https://api.hubapi.com',
   headers: {
@@ -32,9 +25,7 @@ const hubspot = axios.create({
   },
 });
 
-// --------------------------------------------------------------------
-// ROUTE 1 — Homepage "/"  (GET all records, show them in a table)
-// --------------------------------------------------------------------
+
 app.get('/', async (req, res) => {
   const url = `/crm/v3/objects/${CUSTOM_OBJECT}?properties=${PROPERTIES.join(',')}`;
   try {
@@ -50,18 +41,14 @@ app.get('/', async (req, res) => {
   }
 });
 
-// --------------------------------------------------------------------
-// ROUTE 2 — "/update-cobj" (GET) — show the form page
-// --------------------------------------------------------------------
+
 app.get('/update-cobj', (req, res) => {
   res.render('updates', {
     title: 'Update Custom Object Form | Integrating With HubSpot I Practicum',
   });
 });
 
-// --------------------------------------------------------------------
-// ROUTE 3 — "/update-cobj" (POST) — create a record, then redirect home
-// --------------------------------------------------------------------
+
 app.post('/update-cobj', async (req, res) => {
   const newRecord = {
     properties: {
@@ -79,5 +66,4 @@ app.post('/update-cobj', async (req, res) => {
   }
 });
 
-// ---------- Start the server ----------
 app.listen(3000, () => console.log('Listening on http://localhost:3000'));
